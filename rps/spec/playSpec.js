@@ -1,20 +1,20 @@
 function Rps(){
-    this.play = function(p1, p2, ui){
-        new PlayRequest(p1, p2, ui).execute()
+    this.playRound = function(p1Throw, p2Throw, observer){
+        new PlayRoundRequest(p1Throw, p2Throw, observer).execute()
     }
 }
 
-function PlayRequest(p1, p2, ui){
+function PlayRoundRequest(p1Throw, p2Throw, observer){
     this.execute = function(){
-        if (invalid(p1) || invalid(p2))
-            ui.invalid()
-        else if (shapesAreTheSame())
-            ui.tie()
-        else if (p1BeatsP2()
+        if (invalid(p1Throw) || invalid(p2Throw))
+            observer.invalid()
+        else if (throwsAreTheSame())
+            observer.tie()
+        else if (p1ThrowBeatsP2Throw()
         )
-            ui.p1Wins()
+            observer.p1Wins()
         else
-            ui.p2Wins()
+            observer.p2Wins()
     }
 
     const ROCK = "rock"
@@ -27,18 +27,18 @@ function PlayRequest(p1, p2, ui){
         return !validThrows.includes(t)
     }
 
-    function shapesAreTheSame() {
-        return p1 === p2
+    function throwsAreTheSame() {
+        return p1Throw === p2Throw
     }
 
-    function p1BeatsP2() {
-        return p1 === ROCK     && p2 === SCISSORS ||
-               p1 === PAPER    && p2 === ROCK     ||
-               p1 === SCISSORS && p2 === PAPER
+    function p1ThrowBeatsP2Throw() {
+        return p1Throw === ROCK     && p2Throw === SCISSORS ||
+               p1Throw === PAPER    && p2Throw === ROCK     ||
+               p1Throw === SCISSORS && p2Throw === PAPER
     }
 }
 
-describe("play", function () {
+describe("playRound", function () {
     let rps
 
     beforeEach(function () {
@@ -46,107 +46,107 @@ describe("play", function () {
     })
     
     describe("p1 win scenarios", function () {
-        let ui
+        let observer
         
         beforeEach(function () {
-            ui = jasmine.createSpyObj("ui", ["p1Wins"])
+            observer = jasmine.createSpyObj("observer", ["p1Wins"])
         })
         
         it("rock v scissors", function () {
-            rps.play("rock", "scissors", ui)
+            rps.playRound("rock", "scissors", observer)
 
-            expect(ui.p1Wins).toHaveBeenCalled()
+            expect(observer.p1Wins).toHaveBeenCalled()
         })
 
         it("paper v. rock", function () {
-            rps.play("paper", "rock", ui)
+            rps.playRound("paper", "rock", observer)
 
-            expect(ui.p1Wins).toHaveBeenCalled()
+            expect(observer.p1Wins).toHaveBeenCalled()
         })
 
         it("scissors v. paper", function () {
-            rps.play("scissors", "paper", ui)
+            rps.playRound("scissors", "paper", observer)
 
-            expect(ui.p1Wins).toHaveBeenCalled()
+            expect(observer.p1Wins).toHaveBeenCalled()
         })
     })
 
     describe("p2 win scenarios", function () {
-        let ui
+        let observer
 
         beforeEach(function () {
-            ui = jasmine.createSpyObj("ui", ["p2Wins"])
+            observer = jasmine.createSpyObj("observer", ["p2Wins"])
         })
         
         it("scissors v rock", function () {
-            rps.play("scissors", "rock", ui)
+            rps.playRound("scissors", "rock", observer)
 
-            expect(ui.p2Wins).toHaveBeenCalled()
+            expect(observer.p2Wins).toHaveBeenCalled()
         })
 
         it("rock v. paper", function () {
-            rps.play("rock", "paper", ui)
+            rps.playRound("rock", "paper", observer)
 
-            expect(ui.p2Wins).toHaveBeenCalled()
+            expect(observer.p2Wins).toHaveBeenCalled()
         })
 
         it("paper v. scissors", function () {
-            rps.play("paper", "scissors", ui)
+            rps.playRound("paper", "scissors", observer)
 
-            expect(ui.p2Wins).toHaveBeenCalled()
+            expect(observer.p2Wins).toHaveBeenCalled()
         })
     })
 
     describe("tie", function () {
-        let ui
+        let observer
 
         beforeEach(function () {
-            ui = jasmine.createSpyObj("ui", ["tie"])
+            observer = jasmine.createSpyObj("observer", ["tie"])
         })
         
         it("rock v. rock", function () {
-            rps.play("rock", "rock", ui)
+            rps.playRound("rock", "rock", observer)
 
-            expect(ui.tie).toHaveBeenCalled()
+            expect(observer.tie).toHaveBeenCalled()
         })
         
         it("paper v. paper", function () {
-            rps.play("paper", "paper", ui)
+            rps.playRound("paper", "paper", observer)
 
-            expect(ui.tie).toHaveBeenCalled()
+            expect(observer.tie).toHaveBeenCalled()
         })
         
         it("scissors v. scissors", function () {
-            rps.play("scissors", "scissors", ui)
+            rps.playRound("scissors", "scissors", observer)
 
-            expect(ui.tie).toHaveBeenCalled()
+            expect(observer.tie).toHaveBeenCalled()
         })
     })
 
 
     describe("invalid throws", function () {
-        let ui
+        let observer
 
         beforeEach(function () {
-            ui = jasmine.createSpyObj("ui", ["invalid"])
+            observer = jasmine.createSpyObj("observer", ["invalid"])
         })
 
         it("rock v. [invalid throw]", function () {
-            rps.play("rock", Math.random(), ui)
+            rps.playRound("rock", Math.random(), observer)
 
-            expect(ui.invalid).toHaveBeenCalled()
+            expect(observer.invalid).toHaveBeenCalled()
         })
 
         it("invalid throw v. rock", function () {
-            rps.play(Math.random(), "rock", ui)
+            rps.playRound(Math.random(), "rock", observer)
 
-            expect(ui.invalid).toHaveBeenCalled()
+            expect(observer.invalid).toHaveBeenCalled()
         })
 
         it("invalid v. same invalid", function () {
-            rps.play("sailboat", "sailboat", ui)
+            rps.playRound("sailboat", "sailboat", observer)
 
-            expect(ui.invalid).toHaveBeenCalled()
+            expect(observer.invalid).toHaveBeenCalled()
         })
     })
 })
