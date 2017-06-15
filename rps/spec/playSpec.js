@@ -10,8 +10,7 @@ function PlayRoundRequest(p1Throw, p2Throw, observer){
             observer.invalid()
         else if (throwsAreTheSame())
             observer.tie()
-        else if (p1ThrowBeatsP2Throw()
-        )
+        else if (p1ThrowBeatsP2Throw())
             observer.p1Wins()
         else
             observer.p2Wins()
